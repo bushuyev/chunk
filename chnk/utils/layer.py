@@ -26,7 +26,7 @@ from torch.utils.checkpoint import (
     get_device_states,
     set_device_states,
     detach_variable,
-    _supports_autocast,
+    # _supports_autocast,
     noop_context_fn,
     _DEFAULT_DETERMINISM_MODE,
     _checkpoint_without_reentrant_generator
@@ -650,11 +650,16 @@ class CheckpointFunction(torch.autograd.Function):
                     set_device_states(ctx.fwd_devices, ctx.fwd_device_states)
             detached_inputs = detach_variable(tuple(inputs))
 
-            device_autocast_ctx = device_module.amp.autocast(
-                **ctx.device_autocast_kwargs
-            ) if _supports_autocast(ctx.device) else contextlib.nullcontext()
+            device_autocast_ctx = (
+                torch.amp.autocast(
+                    device_type=ctx.device,
+                    **ctx.device_autocast_kwargs,
+                )
+                if torch.amp.is_autocast_available(ctx.device)
+                else contextlib.nullcontext()
+            )
             with torch.enable_grad(), device_autocast_ctx, \
-                torch.cpu.amp.autocast(**ctx.cpu_autocast_kwargs):
+                torch.amp.autocast("cpu", **ctx.cpu_autocast_kwargs):
                 outputs = ctx.run_function(*detached_inputs)
 
         if isinstance(outputs, torch.Tensor):

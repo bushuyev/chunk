@@ -78,7 +78,7 @@ class MyTrainingArguments(TrainingArguments):
         metadata={"help": "The optimizer to use."},
     )
     eval_metric: str = field(
-        default=None, metadata={"help": "Pretrained config name or path if not the same as model_name"}
+        default="glue", metadata={"help": "Pretrained config name or path if not the same as model_name"}
     )
 
 @dataclass
@@ -496,7 +496,7 @@ def main():
         config=config,
         cache_dir=model_args.cache_dir,
         revision=model_args.model_revision,
-        use_auth_token=True if model_args.use_auth_token else None,
+        token=False,
         ignore_mismatched_sizes=model_args.ignore_mismatched_sizes
     )
     if model_args.peft_type:

@@ -592,6 +592,7 @@ def main():
             data_args.dataset_config_name,
             cache_dir=model_args.cache_dir,
             token=model_args.token,
+            trust_remote_code=True,
         )
     else:
         data_files = {}

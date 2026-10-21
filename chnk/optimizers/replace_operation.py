@@ -11,8 +11,9 @@ import deepspeed
 from functools import partial
 from torch._utils import _flatten_dense_tensors
 
-from deepspeed.runtime import DeepSpeedOptimizer
-from deepspeed.runtime.utils import required_torch_version
+from deepspeed.runtime.base_optimizer import DeepSpeedOptimizer
+from deepspeed.utils.torch import required_torch_version
+
 from .checkoverflow import (
     get_global_norm,
     CheckOverflow,
